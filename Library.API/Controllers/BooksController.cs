@@ -2,23 +2,30 @@
 using Library.API.Models;
 using Library.API.Services;
 using Library.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Library.API.Controllers
 {
+    [Authorize]
     [Route("api/books")]
     public class BooksController : Controller
     {
         private IBookRepository bookRepository;
         private IBookGenreRepository bookGenreRepository;
         private IGenreRepository genreRepository;
+        private IBookRequestRepository bookRequestRepository;
 
-        public BooksController(IBookRepository context, IBookGenreRepository bgContext, IGenreRepository gContext)
+        public BooksController(IBookRepository context, 
+            IBookGenreRepository bgContext, 
+            IGenreRepository gContext, 
+            IBookRequestRepository brContext)
         {
             bookRepository = context;
             bookGenreRepository = bgContext;
             genreRepository = gContext;
+            bookRequestRepository = brContext;
         }
 
         #region GetBooks
@@ -26,7 +33,7 @@ namespace Library.API.Controllers
         [HttpGet("")]
         public IActionResult GetBooks(bool includeAuthors = false)
         {
-            
+
             return Json(bookRepository.GetBooks());
         }
 
@@ -60,7 +67,7 @@ namespace Library.API.Controllers
             {
                 ModelState.AddModelError("Summary", "The title and summary must be separate values.");
             }
-            
+
 
             if (!ModelState.IsValid)
             {
@@ -102,7 +109,7 @@ namespace Library.API.Controllers
 
         #endregion
 
-        #region GetBookGenre
+        #region GetGenres
 
 
         [HttpGet("/genres/{genreName}")]
@@ -167,6 +174,49 @@ namespace Library.API.Controllers
             var createdGenreToReturn = Mapper.Map<Models.GenreDto>(finalGenre);
 
             return Created($"api/books/{createdGenreToReturn.Name}", createdGenreToReturn);
+        }
+
+        #endregion
+
+        #region PostBookRequests
+
+        [HttpPost("requests")]
+        public IActionResult RequestNewBook([FromBody] BookRequestForCreationDto request)
+        {
+            if (request == null)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var finalRequest = Mapper.Map<BookRequest>(request);
+
+            bookRequestRepository.AddBookRequest(finalRequest);
+
+            return Created($"api/books/{finalRequest.Id}", finalRequest);
+        }
+
+        #endregion
+
+        #region GetBookRequests
+
+        [HttpGet("requests/{Id}")]
+        public IActionResult GetBookRequest(int Id)
+        {
+            if (bookRequestRepository.BookRequestExists(Id))
+            {
+                return Json(bookRequestRepository.GetBookRequest(Id));
+            }
+            return BadRequest("Book Request doesn't exist.");
+        }
+
+        [HttpGet("requests")]
+        public IActionResult GetBookRequests()
+        {
+            return Json(bookRequestRepository.GetBookRequests());
         }
 
         #endregion

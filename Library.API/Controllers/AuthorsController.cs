@@ -2,11 +2,13 @@
 using Library.API.Models;
 using Library.API.Services;
 using Library.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Library.API.Controllers
 {
+    [Authorize]
     [Route("api/authors")]
     public class AuthorsController : Controller
     {
@@ -38,6 +40,7 @@ namespace Library.API.Controllers
             return Json(author);
         }
 
+        [HttpPost("")]
         public IActionResult NewAuthor([FromBody] AuthorForCreationDto author)
         {
             if (author == null)

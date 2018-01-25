@@ -1,5 +1,6 @@
 ﻿{
   "connectionStrings": {
-    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=LibraryDB2;Trusted_Connection=true;"
+    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=LibraryDB2;Trusted_Connection=true;",
+    "AzureDb":  ""
   }
 }
