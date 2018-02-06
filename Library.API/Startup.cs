@@ -1,16 +1,20 @@
-﻿using Library.API.Services;
+﻿using Library.API.Seeding;
+using Library.API.Services;
 using Library.Entities;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using System.Text;
 
 namespace Library.API
 {
@@ -42,27 +46,40 @@ namespace Library.API
            {
                if (!_env.IsProduction())
                {
-                   
+                   opt.SslPort = 44364;
                }
                opt.Filters.Add(new RequireHttpsAttribute());
            })
-                 .AddMvcOptions( o =>
-                 {
-                     o.OutputFormatters.Add(
-                    new XmlDataContractSerializerOutputFormatter());
+                 .AddMvcOptions(o =>
+                {
+                    o.OutputFormatters.Add(
+                   new XmlDataContractSerializerOutputFormatter());
 
-                 }).AddJsonOptions( o =>
-                 {
-                     o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                     o.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                 });
+                }).AddJsonOptions(o =>
+                {
+                    o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    o.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
-            services.AddIdentity<Admin, IdentityRole>().AddEntityFrameworkStores<LibraryDbContext>();
+            services.AddIdentity<LibraryUser, IdentityRole>().AddEntityFrameworkStores<LibraryDbContext>();
 
-            services.Configure<IdentityOptions>(config =>
-            {
-                config.Cookies
+            services.AddAuthentication(cfg => {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                
+            }).AddJwtBearer(cfg => {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    ValidIssuer = config["Auth:Token:Issuer"],
+                    ValidAudience = config["Auth:Token:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Auth:GUID"])),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true
+
+                };
             });
+            
 
             /// TODO: Impliment and finalize this model of authentication to match the front-end
             /// TODO: Authorize only requests from my front-end & postman
@@ -70,15 +87,17 @@ namespace Library.API
             var connectionString = config["connectionStrings:LocalDb"];
             services.AddDbContext<LibraryDbContext>(o => o.UseSqlServer(connectionString));
 
+            services.AddTransient<IdentityInitializer>();
+            services.AddSingleton(config);
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IBookGenreRepository, BookGenreRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
-            
+            services.AddScoped<IBookRequestRepository, BookRequestRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, LibraryDbContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, LibraryDbContext context, IdentityInitializer identity)
         {
             loggerFactory.AddConsole();
 

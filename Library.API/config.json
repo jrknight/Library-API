@@ -1,6 +1,13 @@
 ﻿{
   "connectionStrings": {
-    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=LibraryDB2;Trusted_Connection=true;",
-    "AzureDb":  ""
+    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=LibraryDB3;Trusted_Connection=true;",
+    "AzureDb": ""
+  },
+  "Auth": {
+    "Token": {
+      "Issuer": "http://www.library.com",
+      "Audience": "http://www.library.com"
+    },
+    "GUID": "ac09a004-b496-4edd-8d5b-4a796203d698"
   }
 }

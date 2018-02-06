@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Library.Entities
 {
     [Table("tblStudent")]
-    public class Student : IdentityUser
+    public class Student
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

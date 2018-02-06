@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20180123003445_AddedRecordsTables.cs" />
-    <Compile Remove="Migrations\20180123003445_AddedRecordsTables.Designer.cs" />
-    <Compile Remove="Migrations\20180123024250_AddedRecordsTables.cs" />
-    <Compile Remove="Migrations\20180123024250_AddedRecordsTables.Designer.cs" />
-    <Compile Remove="Migrations\20180123032637_AddedRecordsTables.cs" />
-    <Compile Remove="Migrations\20180123032637_AddedRecordsTables.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
