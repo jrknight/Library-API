@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Library.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,48 +18,66 @@ namespace Library.API.Services
             _ctx = context;
         }
 
-        public Book GetBook(int Id)
+        public async Task<Book> GetBookAsync(int Id)
         {
-            return _ctx.Books.Where(b => b.Id == Id).FirstOrDefault();
+            return await _ctx.Books.Where(b => b.Id == Id).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<Book> GetBooks()
+        public async Task<IEnumerable<Book>> GetBooksAsync()
         {
-            return _ctx
+            return await _ctx
                 .Books
                 .Include(m => m.Author)
                 .Include(b => b.BookGenres)
                 .ThenInclude(bg => bg.Genre)
                 .OrderBy(b => b.Title)
-                .ToList();
+                .ToListAsync();
             
         }
 
-        public bool BookExists(string Name)
+        public async Task<bool> BookExistsAsync(string Name)
         {
-            return _ctx.Books.Any(b => b.Title == Name);
+            return await _ctx.Books.AnyAsync(b => b.Title == Name);
             
         }
 
-        public void AddBook(Book book)
+        public async Task AddBookAsync(Book book)
         {
-            _ctx.Books.Add(book);
+            await _ctx.Books.AddAsync(book);
             _ctx.Authors.FirstOrDefault(a => a.Id == book.AuthorId).BooksWritten.Add(book);
+            
         }
 
-        public Author GetBookAuthor(int bookId)
+        public async Task<Author> GetBookAuthorAsync(int bookId)
         {
-            return _ctx.Authors.Where(a => a.BooksWritten.Select(b => b.Id == bookId).FirstOrDefault()).FirstOrDefault();
+            return await _ctx.Authors.Where(a => a.BooksWritten.Select(b => b.Id == bookId).FirstOrDefault()).FirstOrDefaultAsync();
         }
 
-        public bool Save()
+        public async Task<bool> SaveAsync()
         {
-            return (_ctx.SaveChanges() >= 0);
+            return (await _ctx.SaveChangesAsync() >= 0);
         }
 
-        public bool BookExists(int Id)
+        public async Task<bool> BookExistsAsync(int Id)
         {
-            return _ctx.Books.Any(b => b.Id == Id);
+            return await _ctx.Books.AnyAsync(b => b.Id == Id);
+        }
+
+        public async Task UpdateBookAsync(Book book)
+        {
+            Book bookInDb = _ctx.Books.Where(b => b.Id == book.Id).FirstOrDefault();
+            if (bookInDb != null)
+            {
+                bookInDb.ISBN = book.ISBN;
+                bookInDb.AuthorId = book.AuthorId;
+                bookInDb.Author = book.Author;
+                bookInDb.BookGenres = book.BookGenres;
+                bookInDb.Summary = book.Summary;
+                bookInDb.Title = book.Title;
+
+                await _ctx.SaveChangesAsync();
+            }
+
         }
     }
 }

@@ -15,7 +15,10 @@ namespace Library.API.Services
 
         public void AddBookGenres(IEnumerable<BookGenre> bookGenres)
         {
-            _ctx.Add(bookGenres);
+            foreach (BookGenre bg in bookGenres)
+            {
+                _ctx.BookGenre.Add(bg);
+            }
         }
 
         public bool GenreExists(string genreName)

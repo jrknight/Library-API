@@ -55,11 +55,12 @@ namespace Library.API.Services
         public IEnumerable<Genre> GetGenresWithIds(IEnumerable<int> Id)
         {
             List<Genre> GenreList = new List<Genre>();
-
-            foreach(int i in Id)
+            
+            foreach (int i in Id)
             {
                 GenreList.Concat(_ctx.Genres.Where(g => g.Id == i));
             }
+            
 
             return GenreList;
         }

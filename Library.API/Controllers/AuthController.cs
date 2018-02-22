@@ -24,7 +24,10 @@ namespace Library.API.Controllers
         private IPasswordHasher<LibraryUser> passwordHasher;
         private IConfigurationRoot config;
 
-        public AuthController(LibraryDbContext context, SignInManager<LibraryUser> signInManager, UserManager<LibraryUser> userManager, IPasswordHasher<LibraryUser> hasher,
+        public AuthController(LibraryDbContext context,
+            SignInManager<LibraryUser> signInManager,
+            UserManager<LibraryUser> userManager,
+            IPasswordHasher<LibraryUser> hasher,
             IConfigurationRoot config)
         {
             ctx = context;
@@ -36,7 +39,7 @@ namespace Library.API.Controllers
 
         [ValidateModel]
         [HttpPost("api/auth/login")]
-        public async Task<IActionResult> Login ([FromBody] CredentialModel model)
+        public async Task<IActionResult> Login([FromBody] CredentialModel model)
         {
             try
             {
@@ -72,11 +75,11 @@ namespace Library.API.Controllers
                         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(guid));
                         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                        var token = new JwtSecurityToken( 
+                        var token = new JwtSecurityToken(
                             issuer: config["Auth:Token:Issuer"],
                             audience: config["Auth:Token:Audience"],
-                            claims: claims, 
-                            expires: DateTime.UtcNow.AddMonths(1), 
+                            claims: claims,
+                            expires: DateTime.UtcNow.AddMonths(1),
                             signingCredentials: creds
                             );
 
@@ -89,12 +92,68 @@ namespace Library.API.Controllers
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"Exception thrown while creating a JWT: {ex}");
             }
 
             return BadRequest("Failed to generate token.");
+        }
+
+        [ValidateModel]
+        [HttpPost("api/auth/newuser")]
+        public async Task<IActionResult> NewUser([FromBody] CredentialModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (await userMgr.FindByNameAsync(model.UserName) != null)
+            {
+                return BadRequest("User already exists");
+            }
+            var user = await userMgr.FindByNameAsync(model.UserName);
+
+            if (user == null)
+            {
+                var newUser = new LibraryUser()
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    RoleClaim = model.RoleClaim,
+                };
+
+                var result = await userMgr.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+
+                    user = ctx.Users.Where(u => u.UserName == user.UserName).FirstOrDefault();
+
+                    var roleResult = await userMgr
+                        .AddToRoleAsync(user, model.RoleClaim);
+
+                    return Created($"api/auth/login", result);
+                }
+                else
+                {
+                    await userMgr.DeleteAsync(user);
+                    return BadRequest();
+                }
+            }
+
+            ///TODO: Add extra checks for correct provided information
+
+            
+
+
+            return BadRequest("There was insufficient data provided.");
         }
     }
 }

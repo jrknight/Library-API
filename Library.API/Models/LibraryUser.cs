@@ -10,6 +10,7 @@ namespace Library.Entities
 {
     public class LibraryUser : IdentityUser
     {
-
+        public string RoleClaim { get; set; }
+        public string Name { get; set; }
     }
 }

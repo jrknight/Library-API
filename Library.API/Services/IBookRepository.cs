@@ -1,16 +1,18 @@
 ﻿using Library.Entities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Library.API.Services
 {
     public interface IBookRepository 
     {
-        IEnumerable<Book> GetBooks();
-        Book GetBook(int Id);
-        Author GetBookAuthor(int bookId);
-        bool BookExists(string Name);
-        bool BookExists(int Id);
-        void AddBook(Book book);
-        bool Save();
+        Task<IEnumerable<Book>> GetBooksAsync();
+        Task<Book> GetBookAsync(int Id);
+        Task<Author> GetBookAuthorAsync(int bookId);
+        Task<bool> BookExistsAsync(string Name);
+        Task<bool> BookExistsAsync(int Id);
+        Task AddBookAsync(Book book);
+        Task UpdateBookAsync(Book book);
+        Task<bool> SaveAsync();
     }
 }

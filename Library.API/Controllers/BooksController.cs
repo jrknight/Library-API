@@ -6,11 +6,11 @@ using Library.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Library.API.Controllers
 {
     [Route("api/books")]
-    [Authorize]
     public class BooksController : Controller
     {
         private IBookRepository bookRepository;
@@ -18,9 +18,9 @@ namespace Library.API.Controllers
         private IGenreRepository genreRepository;
         private IBookRequestRepository bookRequestRepository;
 
-        public BooksController(IBookRepository bcontext, 
-            IBookGenreRepository bgContext, 
-            IGenreRepository gContext, 
+        public BooksController(IBookRepository bcontext,
+            IBookGenreRepository bgContext,
+            IGenreRepository gContext,
             IBookRequestRepository brContext)
         {
             bookRepository = bcontext;
@@ -29,19 +29,20 @@ namespace Library.API.Controllers
             bookRequestRepository = brContext;
         }
 
+
         #region GetBooks
 
         [HttpGet("")]
-        public IActionResult GetBooks(bool includeAuthors = false)
+        public async Task<IActionResult> GetBooksAsync(bool includeAuthors = false)
         {
-            return Json(bookRepository.GetBooks());
+            return Json(await bookRepository.GetBooksAsync());
         }
 
         [HttpGet("/{BookId}")]
-        public IActionResult GetBook([FromHeader] int BookId)
+        public async Task<IActionResult> GetBookAsync([FromHeader] int BookId)
         {
 
-            var book = bookRepository.GetBook(BookId);
+            var book = await bookRepository.GetBookAsync(BookId);
 
             if (book == null)
             {
@@ -53,13 +54,14 @@ namespace Library.API.Controllers
 
         #endregion
 
+
         #region PostBooks
 
 
         [HttpPost("")]
-        public IActionResult NewBook([FromBody] BookForCreationDto book, [FromBody] IEnumerable<int> genreIds)
+        public async Task<IActionResult> NewBookAsync([FromBody] BookForCreationDto book)
         {
-            if (bookRepository.BookExists(book.Title))
+            if (await bookRepository.BookExistsAsync(book.Title))
             {
                 return BadRequest("Book already exists");
             }
@@ -69,11 +71,16 @@ namespace Library.API.Controllers
                 ModelState.AddModelError("Summary", "The title and summary must be separate values.");
             }
 
+            if (book.genreIds == null)
+            {
+                return BadRequest("A genre value is required");
+            }
+
             var finalBook = Mapper.Map<Entities.Book>(book);
 
-            bookRepository.AddBook(finalBook);
+            await bookRepository.AddBookAsync(finalBook);
 
-            var genres = genreRepository.GetGenresWithIds(genreIds);
+            var genres = genreRepository.GetGenresWithIds(book.genreIds);
 
             List<BookGenre> BookGenres = new List<BookGenre>();
 
@@ -90,7 +97,7 @@ namespace Library.API.Controllers
 
             bookGenreRepository.AddBookGenres(BookGenres);
 
-            if (!bookRepository.Save())
+            if (!await bookRepository.SaveAsync())
             {
                 return StatusCode(500, "A problem occurred while handling your request.");
             }
@@ -104,6 +111,26 @@ namespace Library.API.Controllers
 
         #endregion
 
+
+        #region PutBooks
+
+
+        [HttpPut("")]
+        public async Task<IActionResult> PutBookAsync([FromBody] Book model)
+        {
+            if (await bookRepository.BookExistsAsync(model.Id))
+            {
+
+            }
+
+
+            return Ok();
+        }
+
+
+        #endregion
+        
+        
         #region PostBookRequests
 
         [HttpPost("requests")]
@@ -126,6 +153,7 @@ namespace Library.API.Controllers
         }
 
         #endregion
+
 
         #region GetBookRequests
 

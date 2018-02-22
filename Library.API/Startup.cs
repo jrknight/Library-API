@@ -63,6 +63,9 @@ namespace Library.API
 
             services.AddIdentity<LibraryUser, IdentityRole>().AddEntityFrameworkStores<LibraryDbContext>();
 
+
+
+
             services.AddAuthentication(cfg => {
                 cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 
@@ -112,7 +115,7 @@ namespace Library.API
                 app.UseExceptionHandler();
             }
 
-
+            identity.Seed().Wait();
 
             AutoMapper.Mapper.Initialize(cfg =>
             {

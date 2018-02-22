@@ -48,9 +48,9 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("{bookId}")]
-        public IActionResult GetGenresForBook(int bookId)
+        public async Task<IActionResult> GetGenresForBookAsync(int bookId)
         {
-            if (bookRepository.BookExists(bookId))
+            if (await bookRepository.BookExistsAsync(bookId))
             {
                 var results = Mapper.Map<IEnumerable<Genre>>(bookGenreRepository.GetGenresForBook(bookId));
                 return Json(results);

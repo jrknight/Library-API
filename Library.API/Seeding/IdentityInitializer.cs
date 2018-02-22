@@ -24,14 +24,9 @@ namespace Library.API.Seeding
         public async Task Seed()
         {
             var user = await userManager.FindByNameAsync("joshknight");
-            if (user == null)
+
+            if (user != null)
             {
-                if (!(await roleManager.RoleExistsAsync("Admin")))
-                {
-                    var role = new IdentityRole("Admin");
-                    
-                    await roleManager.CreateAsync(role);
-                }
 
                 user = new LibraryUser()
                 {
@@ -53,6 +48,48 @@ namespace Library.API.Seeding
                     throw new InvalidOperationException("Failed to build user and roles");
                 }
             }
+
+            if (!(await roleManager.RoleExistsAsync("Admin")))
+            {
+                var role = new IdentityRole()
+                {
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                };
+
+                await roleManager.CreateAsync(role);
+
+            }
+            if (!(await roleManager.RoleExistsAsync("Student")))
+            {
+                var role = new IdentityRole()
+                {
+                    Name = "Student",
+                    NormalizedName = "STUDENT"
+                };
+                var result = await roleManager.CreateAsync(role);
+                ;
+            }
+            if (!(await roleManager.RoleExistsAsync("Teacher")))
+            {
+                var role = new IdentityRole()
+                {
+                    Name = "Teacher",
+                    NormalizedName = "TEACHER"
+                };
+                await roleManager.CreateAsync(role);
+            }
+            if (!(await roleManager.RoleExistsAsync("Librarian")))
+            {
+                var role = new IdentityRole()
+                {
+                    Name = "Librarian",
+                    NormalizedName = "LIBRARIAN"
+                };
+                await roleManager.CreateAsync(role);
+
+            }
+            
         }
     }
 }
