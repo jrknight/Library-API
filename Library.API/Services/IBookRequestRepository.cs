@@ -1,4 +1,5 @@
-﻿using Library.Entities;
+﻿using Entities;
+using Library.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace Library.API.Services
     {
         IEnumerable<BookRequest> GetBookRequests();
         BookRequest GetBookRequest(int Id);
-        Student GetBookRequestStudent(int bookRequestId);
+        LibraryUser GetBookRequestStudent(int bookRequestId);
+        List<BookRequest> GetBookRequestsForUser(string UserName);
         bool BookRequestExists(int Id);
         void AddBookRequest(BookRequest bookRequest);
         bool Save();

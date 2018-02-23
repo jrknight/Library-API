@@ -1,4 +1,5 @@
-﻿using Library.API.Filters;
+﻿using Entities;
+using Library.API.Filters;
 using Library.API.Models;
 using Library.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -83,7 +84,7 @@ namespace Library.API.Controllers
                             signingCredentials: creds
                             );
 
-                        return Ok(new
+                        return Json(new
                         {
                             token = new JwtSecurityTokenHandler().WriteToken(token),
                             expiration = token.ValidTo
@@ -114,10 +115,11 @@ namespace Library.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await userMgr.FindByNameAsync(model.UserName) != null)
+            if (!model.RoleClaim.ToLower().Equals("student"))
             {
-                return BadRequest("User already exists");
+                return BadRequest();
             }
+
             var user = await userMgr.FindByNameAsync(model.UserName);
 
             if (user == null)
@@ -126,24 +128,25 @@ namespace Library.API.Controllers
                 {
                     UserName = model.UserName,
                     Email = model.Email,
-                    RoleClaim = model.RoleClaim,
+                    Name = model.Name
+                    
                 };
 
-                var result = await userMgr.CreateAsync(user, model.Password);
+                var result = await userMgr.CreateAsync(newUser, model.Password);
 
                 if (result.Succeeded)
                 {
 
-                    user = ctx.Users.Where(u => u.UserName == user.UserName).FirstOrDefault();
+                    newUser = ctx.Users.Where(u => u.UserName == newUser.UserName).FirstOrDefault();
 
                     var roleResult = await userMgr
-                        .AddToRoleAsync(user, model.RoleClaim);
+                        .AddToRoleAsync(newUser, model.RoleClaim);
 
                     return Created($"api/auth/login", result);
                 }
                 else
                 {
-                    await userMgr.DeleteAsync(user);
+                    await userMgr.DeleteAsync(newUser);
                     return BadRequest();
                 }
             }

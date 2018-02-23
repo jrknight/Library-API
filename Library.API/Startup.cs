@@ -1,4 +1,5 @@
-﻿using Library.API.Seeding;
+﻿using Entities;
+using Library.API.Seeding;
 using Library.API.Services;
 using Library.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -115,7 +116,7 @@ namespace Library.API
                 app.UseExceptionHandler();
             }
 
-            identity.Seed().Wait();
+            //identity.Seed().Wait();
 
             AutoMapper.Mapper.Initialize(cfg =>
             {

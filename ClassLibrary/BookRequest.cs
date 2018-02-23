@@ -1,9 +1,7 @@
-﻿using Library.Entities;
+﻿using Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Library.Entities
 {
@@ -16,7 +14,7 @@ namespace Library.Entities
         [Required]
         public Book Book { get; set; }
         [Required]
-        public Student Student { get; set; }
+        public LibraryUser User { get; set; }
         [Required]
         public DateTime RequestDate { get; set; }
         [Required]

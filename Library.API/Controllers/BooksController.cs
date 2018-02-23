@@ -133,8 +133,10 @@ namespace Library.API.Controllers
         
         #region PostBookRequests
 
+        [Authorize]
+        [ValidateModel]
         [HttpPost("requests")]
-        public IActionResult RequestNewBook([FromBody] BookRequestForCreationDto request)
+        public IActionResult RequestNewBook([FromBody] BookRequest request)
         {
             if (request == null)
             {
@@ -145,11 +147,9 @@ namespace Library.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var finalRequest = Mapper.Map<BookRequest>(request);
+            bookRequestRepository.AddBookRequest(request);
 
-            bookRequestRepository.AddBookRequest(finalRequest);
-
-            return Created($"api/books/{finalRequest.Id}", finalRequest);
+            return Created($"api/books/requests/{request.Id}", request);
         }
 
         #endregion
@@ -167,6 +167,12 @@ namespace Library.API.Controllers
             return BadRequest("Book Request doesn't exist.");
         }
 
+        [HttpGet("requests/users/{UserName}")]
+        public IActionResult GetBookRequestsForUsers(string UserId)
+        {
+            return Json(bookRequestRepository.GetBookRequestsForUser(UserId));
+        }
+
         [HttpGet("requests")]
         public IActionResult GetBookRequests()
         {
@@ -174,6 +180,7 @@ namespace Library.API.Controllers
         }
 
         #endregion
+
 
     }
 }

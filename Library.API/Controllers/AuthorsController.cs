@@ -5,6 +5,7 @@ using Library.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Library.API.Controllers
 {
@@ -36,6 +37,7 @@ namespace Library.API.Controllers
             {
                 return BadRequest();
             }
+            author.BooksWritten = authorRepository.GetBooksWithAuthor(author.Id).ToList();
 
             return Json(author);
         }

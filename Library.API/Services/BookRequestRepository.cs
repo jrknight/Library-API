@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Entities;
 using Library.Entities;
 
 namespace Library.API.Services
@@ -35,9 +36,14 @@ namespace Library.API.Services
             return ctx.BookRequests.ToList();
         }
 
-        public Student GetBookRequestStudent(int bookRequestId)
+        public List<BookRequest> GetBookRequestsForUser(string UserName)
         {
-            return ctx.BookRequests.FirstOrDefault(br => br.Id == bookRequestId).Student;
+            return ctx.BookRequests.Where(br => br.User.UserName == UserName).ToList();
+        }
+
+        public LibraryUser GetBookRequestStudent(int bookRequestId)
+        {
+            return ctx.BookRequests.FirstOrDefault(br => br.Id == bookRequestId).User;
         }
 
         public bool Save()
