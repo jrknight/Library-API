@@ -5,22 +5,22 @@ using System.IO;
 
 namespace Library.API
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<LibraryDbContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ReCircleDbContext>
     {
-        public LibraryDbContext CreateDbContext(string[] args)
+        public ReCircleDbContext CreateDbContext(string[] args)
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(Directory.GetCurrentDirectory());
             configBuilder.AddJsonFile("config.json");
             var config = configBuilder.Build();
 
-            var connectionstring = config.GetConnectionString("LocalDb");
+            var connectionstring = config.GetConnectionString("AzureDb");
 
-            var builder = new DbContextOptionsBuilder<LibraryDbContext>();
+            var builder = new DbContextOptionsBuilder<ReCircleDbContext>();
 
             builder.UseSqlServer(connectionstring);
 
-            var context = new LibraryDbContext(builder.Options);
+            var context = new ReCircleDbContext(builder.Options);
 
             return context;
         }

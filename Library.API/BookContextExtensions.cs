@@ -1,4 +1,4 @@
-﻿using Library.Entities;
+﻿using Entities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,20 +6,19 @@ namespace Library.API
 {
     public static class BookContextExtensions
     {
-        public static void EnsureSeedDataForContext(this LibraryDbContext context)
+        public static void EnsureSeedDataForContext(this ReCircleDbContext context)
         {
-            if (context.Books.Any())
+            if (context.Items.Any())
             {
                 return;
             }
 
-            var books = new List<Book>()
+            var books = new List<Item>()
             {
-                new Book()
+                new Item()
                 {
-                    Title = "Harry Potter and the Chamber of Secrets",
-                    Summary = "A book involving Harry Potter.",
-                    AuthorId = 1,
+                    Title = "New item",
+                    Description = "its an item",
                     Id = 0
                 }
             };

@@ -1,34 +1,37 @@
 ﻿using Entities;
 using Library.API.Filters;
 using Library.API.Models;
-using Library.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Library.API.Controllers
 {
+    [Route("api/auth")]
     public class AuthController : Controller
     {
-        private LibraryDbContext ctx;
-        private SignInManager<LibraryUser> signInMgr;
-        private UserManager<LibraryUser> userMgr;
-        private IPasswordHasher<LibraryUser> passwordHasher;
+        private ReCircleDbContext ctx;
+        private SignInManager<User> signInMgr;
+        private UserManager<User> userMgr;
+        private IPasswordHasher<User> passwordHasher;
         private IConfigurationRoot config;
 
-        public AuthController(LibraryDbContext context,
-            SignInManager<LibraryUser> signInManager,
-            UserManager<LibraryUser> userManager,
-            IPasswordHasher<LibraryUser> hasher,
+        public AuthController(ReCircleDbContext context,
+            SignInManager<User> signInManager,
+            UserManager<User> userManager,
+            IPasswordHasher<User> hasher,
             IConfigurationRoot config)
         {
             ctx = context;
@@ -39,7 +42,7 @@ namespace Library.API.Controllers
         }
 
         [ValidateModel]
-        [HttpPost("api/auth/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CredentialModel model)
         {
             try
@@ -57,8 +60,9 @@ namespace Library.API.Controllers
             return BadRequest("Failed to log in.");
         }
 
+
         [ValidateModel]
-        [HttpPost("api/auth/token")]
+        [HttpPost("token")]
         public async Task<IActionResult> CreateToken([FromBody] CredentialModel model)
         {
             try
@@ -84,11 +88,14 @@ namespace Library.API.Controllers
                             signingCredentials: creds
                             );
 
+                        
+                        
                         return Json(new
                         {
                             token = new JwtSecurityTokenHandler().WriteToken(token),
-                            expiration = token.ValidTo
-
+                            expiration = token.ValidTo,
+                            role = userMgr.GetRolesAsync(user).Result,
+                            currentUser = user
                         });
                     }
                 }
@@ -100,22 +107,24 @@ namespace Library.API.Controllers
 
             return BadRequest("Failed to generate token.");
         }
+        
 
-        [ValidateModel]
-        [HttpPost("api/auth/newuser")]
+        [HttpPost("newuser")]
         public async Task<IActionResult> NewUser([FromBody] CredentialModel model)
         {
+
             if (model == null)
             {
-                return BadRequest();
+                return BadRequest($"The request body can't be null {model}");
             }
 
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            if (!model.RoleClaim.ToLower().Equals("student"))
+            
+            var role = model.RoleClaim?.ToLower();
+            if (string.IsNullOrEmpty(role))
             {
                 return BadRequest();
             }
@@ -124,7 +133,7 @@ namespace Library.API.Controllers
 
             if (user == null)
             {
-                var newUser = new LibraryUser()
+                var newUser = new User()
                 {
                     UserName = model.UserName,
                     Email = model.Email,
@@ -153,10 +162,7 @@ namespace Library.API.Controllers
 
             ///TODO: Add extra checks for correct provided information
 
-            
-
-
-            return BadRequest("There was insufficient data provided.");
+            return BadRequest("The user might already exist.");
         }
     }
 }

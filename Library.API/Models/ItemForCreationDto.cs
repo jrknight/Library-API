@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Library.API.Models
 {
-    public class BookForCreationDto
+    public class ItemForCreationDto
     {
         [Required(ErrorMessage = "You should provide a title value.")]
         [MaxLength(50)]
@@ -12,11 +12,9 @@ namespace Library.API.Models
         public int AuthorId { get; set; }
         [Required]
         [MaxLength(1000)]
-        public string Summary { get; set; }
+        public string Description { get; set; }
         [Required]
         [MaxLength(20)]
-        public string ISBN { get; set; }
-        [Required]
-        public IEnumerable<int> genreIds { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }

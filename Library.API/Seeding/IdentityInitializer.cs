@@ -1,5 +1,4 @@
 ﻿using Entities;
-using Library.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,10 @@ namespace Library.API.Seeding
     public class IdentityInitializer
     {
         private RoleManager<IdentityRole> roleManager;
-        private LibraryDbContext context;
-        private UserManager<LibraryUser> userManager;
+        private ReCircleDbContext context;
+        private UserManager<User> userManager;
 
-        public IdentityInitializer(UserManager<LibraryUser> userMgr, RoleManager<IdentityRole> roleMgr, LibraryDbContext context)
+        public IdentityInitializer(UserManager<User> userMgr, RoleManager<IdentityRole> roleMgr, ReCircleDbContext context)
         {
             userManager = userMgr;
             roleManager = roleMgr;
@@ -24,15 +23,15 @@ namespace Library.API.Seeding
 
         public async Task Seed()
         {
-            var user = await userManager.FindByNameAsync("joshknight");
+            var user = await userManager.FindByNameAsync("devtester");
 
             if (user != null)
             {
 
-                user = new LibraryUser()
+                user = new User()
                 {
-                    UserName = "joshuaknight",
-                    Email = "jrk.reno@gmail.com"
+                    UserName = "devtesting",
+                    Email = "dev@dev.com"
                 };
 
                 var userResult = await userManager.CreateAsync(user, "Password!123");
@@ -92,5 +91,8 @@ namespace Library.API.Seeding
             }
             
         }
+
     }
+
+
 }

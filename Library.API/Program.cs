@@ -21,5 +21,6 @@ namespace Library.API
                     logging.AddAzureWebAppDiagnostics();
                 })
                 .Build();
+
     }
 }

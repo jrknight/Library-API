@@ -1,12 +1,12 @@
 ﻿{
   "connectionStrings": {
-    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=LibraryDB3;Trusted_Connection=true;",
-    "AzureDb": ""
+    "LocalDb": "Server=(localdb)\\mssqllocaldb;Database=TestDBForReCircle;Trusted_Connection=true;",
+    "AzureDb": "Server=tcp:libraryapidbserver.database.windows.net,1433;Initial Catalog=LIbraryDB;Persist Security Info=False;User ID=joshuaknight;Password=Chloebell123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   },
   "Auth": {
     "Token": {
-      "Issuer": "http://www.library.com",
-      "Audience": "http://www.library.com"
+      "Issuer": "http://www.libraryapi.azurewebsites.com",
+      "Audience": "http://www.libraryapi.azurewebsites.com"
     },
     "GUID": "ac09a004-b496-4edd-8d5b-4a796203d698"
   }
