@@ -57,8 +57,7 @@ namespace Library.API.Migrations
 
                     b.Property<int>("ItemId");
 
-                    b.Property<string>("OwnerId")
-                        .IsRequired();
+                    b.Property<string>("OwnerId");
 
                     b.Property<DateTime>("RecordDate");
 
@@ -279,8 +278,7 @@ namespace Library.API.Migrations
 
                     b.HasOne("Entities.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("Entities.User", "User")
                         .WithMany("ItemRecords")
