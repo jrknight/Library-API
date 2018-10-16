@@ -45,10 +45,7 @@ namespace Library.API
         {
             services.AddMvc(opt =>
            {
-               if (!env.IsProduction())
-               {
-                   opt.SslPort = 44364;
-               }
+               opt.SslPort = 44364;
                opt.Filters.Add(new RequireHttpsAttribute());
            })
                  .AddMvcOptions(o =>

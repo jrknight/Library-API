@@ -12,7 +12,6 @@ namespace Library.API.Models
     {
         [Required]
         public string Password { get; set; }
-        public string RoleClaim { get; set; }
         public string Name { get; set; }
     }
 }

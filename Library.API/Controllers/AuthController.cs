@@ -122,12 +122,6 @@ namespace Library.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var role = model.RoleClaim?.ToLower();
-            if (string.IsNullOrEmpty(role))
-            {
-                return BadRequest();
-            }
 
             var user = await userMgr.FindByNameAsync(model.UserName);
 
@@ -148,8 +142,6 @@ namespace Library.API.Controllers
 
                     newUser = ctx.Users.Where(u => u.UserName == newUser.UserName).FirstOrDefault();
 
-                    var roleResult = await userMgr
-                        .AddToRoleAsync(newUser, model.RoleClaim);
 
                     return Created($"api/auth/login", result);
                 }

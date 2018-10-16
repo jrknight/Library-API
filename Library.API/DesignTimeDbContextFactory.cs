@@ -14,7 +14,7 @@ namespace Library.API
             configBuilder.AddJsonFile("config.json");
             var config = configBuilder.Build();
 
-            var connectionstring = config.GetConnectionString("AzureDb");
+            var connectionstring = config.GetConnectionString("LocalDb");
 
             var builder = new DbContextOptionsBuilder<ReCircleDbContext>();
 

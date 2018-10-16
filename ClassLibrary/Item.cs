@@ -19,12 +19,15 @@ namespace Entities
         [Required]
         public string OwnerEmail { get; set; }
         [Required]
+        public string OwnerName { get; set; }
+        [Required]
         public string CurrentHolderEmail { get; set; }
+        [Required]
+        public string HolderName { get; set; }
 
 
         
         public ICollection<ItemRequest> ItemRequests { get; set; }
         public ICollection<ItemRecord> ItemRecords { get; set; }
-        public IEnumerable<Item> Items { get; set; }
     }
 }

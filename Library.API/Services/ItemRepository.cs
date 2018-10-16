@@ -28,6 +28,7 @@ namespace Library.API.Services
 
         public async Task<IEnumerable<Item>> GetItemsAsync()
         {
+            
             return await _ctx
                 .Items
                 .Include(m => m.OwnerEmail)

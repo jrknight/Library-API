@@ -9,7 +9,7 @@ namespace Library.API.Models
         [MaxLength(50)]
         public string Title { get; set; }
         [Required(ErrorMessage = "You should provide an author value.")]
-        public int AuthorId { get; set; }
+        public string OwnerEmail { get; set; }
         [Required]
         [MaxLength(1000)]
         public string Description { get; set; }

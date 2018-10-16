@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Library.API.Controllers
 {
-    [Route("api/items")]
+    [Route("api/books")]
     public class ItemsController : Controller
     {
         private IItemRepository itemRepository;
@@ -54,6 +54,19 @@ namespace Library.API.Controllers
             return Json(item);
         }
 
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetItemsForUserAsync(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            return Json(user);
+        }
+
         #endregion
 
         #region PostItems
@@ -88,11 +101,11 @@ namespace Library.API.Controllers
 
         #endregion
 
-        #region PutBooks
+        #region PutItems
 
 
         [HttpPut("")]
-        public async Task<IActionResult> PutBookAsync([FromBody] Item model)
+        public async Task<IActionResult> PutItemAsync([FromBody] Item model)
         {
             if (await itemRepository.ItemExistsAsync(model.Id))
             {
@@ -106,12 +119,12 @@ namespace Library.API.Controllers
 
         #endregion
         
-        #region PostBookRequests
+        #region PostItemRequests
 
         [Authorize]
         [ValidateModel]
         [HttpPost("requests")]
-        public async Task<IActionResult> RequestNewBook([FromBody] ItemRequestForCreationDto request)
+        public async Task<IActionResult> RequestItem([FromBody] ItemRequestForCreationDto request)
         {
             if (request == null)
             {
@@ -123,7 +136,7 @@ namespace Library.API.Controllers
             }
             var user = await userManager.FindByNameAsync(User.Claims.First().Value);
 
-            ItemRequest bookRequest = new ItemRequest()
+            ItemRequest itemRequest = new ItemRequest()
             {
                 ItemId = request.BookId,
                 UserId = user.Id,
@@ -131,15 +144,15 @@ namespace Library.API.Controllers
             };
 
 
-            itemRequestRepository.AddItemRequest(bookRequest);
+            itemRequestRepository.AddItemRequest(itemRequest);
 
             if (!itemRequestRepository.Save())
             {
                 return BadRequest("A problem occurred while handling your request.");
             }
-            bookRequest.Item = await itemRepository.GetItemAsync(bookRequest.ItemId);
+            itemRequest.Item = await itemRepository.GetItemAsync(itemRequest.ItemId);
 
-            return Created($"api/books/requests/users/{bookRequest.UserId}", bookRequest);
+            return Created($"api/books/requests/users/{itemRequest.UserId}", itemRequest);
         }
 
         #endregion
@@ -148,7 +161,7 @@ namespace Library.API.Controllers
 
 
         [HttpGet("requests/user/")]
-        public async Task<IActionResult> GetBookRequestsForUser()
+        public async Task<IActionResult> GetItemRequestsForUser()
         {
             var user = await userManager.FindByNameAsync(User.Claims.First().Value);
 
