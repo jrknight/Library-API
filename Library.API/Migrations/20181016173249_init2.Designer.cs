@@ -4,14 +4,16 @@ using Library.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Library.API.Migrations
 {
     [DbContext(typeof(ReCircleDbContext))]
-    partial class ReCircleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181016173249_init2")]
+    partial class init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,8 +59,7 @@ namespace Library.API.Migrations
 
                     b.Property<int>("ItemId");
 
-                    b.Property<string>("OwnerId")
-                        .IsRequired();
+                    b.Property<string>("OwnerId");
 
                     b.Property<DateTime>("RecordDate");
 
@@ -120,6 +121,8 @@ namespace Library.API.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Nickname");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
@@ -279,8 +282,7 @@ namespace Library.API.Migrations
 
                     b.HasOne("Entities.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("Entities.User", "User")
                         .WithMany("ItemRecords")

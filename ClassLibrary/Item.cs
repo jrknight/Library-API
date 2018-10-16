@@ -19,11 +19,7 @@ namespace Entities
         [Required]
         public string OwnerEmail { get; set; }
         [Required]
-        public string OwnerName { get; set; }
-        [Required]
         public string CurrentHolderEmail { get; set; }
-        [Required]
-        public string HolderName { get; set; }
 
 
         

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Entities;
+using Library.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,17 +39,9 @@ namespace Library.API.Services
             
         }
 
-        public async Task<bool> ItemExistsAsync(string Name)
-        {
-            return await _ctx.Items.AnyAsync(b => b.Title == Name);
-            
-        }
-
         public async Task AddItemAsync(Item item)
         {
             await _ctx.Items.AddAsync(item);
-
-            
         }
 
         public async Task<bool> SaveAsync()

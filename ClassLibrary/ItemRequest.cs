@@ -14,16 +14,14 @@ namespace Entities
         [Required]
         public int ItemId { get; set; }
 
-        [Required]
         public Item Item { get; set; }
-        
+
         [Required]
         public string UserId { get; set; }
 
         public User User { get; set; }
-        
-        public User Owner { get; set; }
 
+        [Required]
         public DateTime RequestDate { get; set; }
 
     }

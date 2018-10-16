@@ -76,23 +76,20 @@ namespace Library.API.Controllers
         [HttpPost("")]
         public async Task<IActionResult> NewItemAsync([FromBody] ItemForCreationDto item)
         {
-            if (await itemRepository.ItemExistsAsync(item.Title))
+            var finalItem = new Item
             {
-                return BadRequest("Item already exists");
-            }
-
-            if (item.Title == item.Description)
-            {
-                ModelState.AddModelError("Summary", "The title and summary must be separate values.");
-            }
-
-            var finalItem = Mapper.Map<Item>(item);
+                OwnerEmail = item.OwnerEmail,
+                Description = item.Description,
+                CurrentHolderEmail = item.OwnerEmail,
+                PhotoUrl = item.PhotoUrl,
+                Title = item.Title
+            };
 
             await itemRepository.AddItemAsync(finalItem);
 
             if (!await itemRepository.SaveAsync())
             {
-                return StatusCode(500, "A problem occurred while handling your request.");
+                return BadRequest("Try agian another time.");
             }
             
 
@@ -185,7 +182,6 @@ namespace Library.API.Controllers
             foreach (ItemRequest b in requests)
             {
                 b.Item = await itemRepository.GetItemAsync(b.ItemId);
-                b.Owner = await userManager.FindByEmailAsync(b.Owner.Email);
                 b.User = await userManager.FindByIdAsync(b.UserId);
             }
             return Json(requests);

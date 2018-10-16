@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Library.API.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,7 +10,6 @@ namespace Library.API.Services
         Task<IEnumerable<Item>> GetItemsAsync();
         Task<Item> GetItemAsync(int Id);
         Task<User> GetItemOwnerAsync(int itemId);
-        Task<bool> ItemExistsAsync(string Name);
         Task<bool> ItemExistsAsync(int Id);
         Task AddItemAsync(Item item);
         Task UpdateItemAsync(Item item);
