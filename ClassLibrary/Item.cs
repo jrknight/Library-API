@@ -16,9 +16,11 @@ namespace Entities
         public string Description { get; set; }
         [Required]
         public string PhotoUrl { get; set; }
-        
         [Required]
+        public string OwnerEmail { get; set; }
+
         public User Owner { get; set; }
+
 
         [Required]
         public string CurrentHolderEmail { get; set; }

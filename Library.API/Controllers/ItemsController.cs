@@ -241,12 +241,12 @@ namespace Library.API.Controllers
 
             var bookRecords = itemRecordRepository.GetItemRecordsForUser(user.Id);
             
-            foreach(ItemRecord b in bookRecords)
+            /*foreach(ItemRecord b in bookRecords)
             {
                 b.Item = await itemRepository.GetItemAsync(b.ItemId);
                 b.Owner = await userManager.FindByEmailAsync(b.Item.Owner.Email);
                 b.User = user;
-            }
+            }*/
 
             return Json(bookRecords);
         }

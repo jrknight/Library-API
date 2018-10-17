@@ -24,11 +24,6 @@ namespace Entities
         public User User { get; set; }
 
         [Required]
-        public string OwnerId { get; set; }
-
-        public User Owner { get; set; }
-
-        [Required]
         public DateTime RecordDate { get; set; }
 
     }
