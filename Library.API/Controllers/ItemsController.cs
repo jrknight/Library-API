@@ -78,12 +78,15 @@ namespace Library.API.Controllers
         {
             var finalItem = new Item
             {
-                OwnerEmail = item.OwnerEmail,
+                Owner = await userManager.FindByEmailAsync(item.OwnerEmail),
                 Description = item.Description,
                 CurrentHolderEmail = item.OwnerEmail,
                 PhotoUrl = item.PhotoUrl,
                 Title = item.Title
             };
+
+            var user = await userManager.FindByEmailAsync(finalItem.Owner.Email);
+            user.Credit += 1;
 
             await itemRepository.AddItemAsync(finalItem);
 
@@ -241,7 +244,7 @@ namespace Library.API.Controllers
             foreach(ItemRecord b in bookRecords)
             {
                 b.Item = await itemRepository.GetItemAsync(b.ItemId);
-                b.Owner = await userManager.FindByEmailAsync(b.Item.OwnerEmail);
+                b.Owner = await userManager.FindByEmailAsync(b.Item.Owner.Email);
                 b.User = user;
             }
 

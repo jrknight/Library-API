@@ -30,12 +30,7 @@ namespace Library.API.Services
         public async Task<IEnumerable<Item>> GetItemsAsync()
         {
             
-            return await _ctx
-                .Items
-                .Include(m => m.OwnerEmail)
-                .Include(b => b.ItemRecords)
-                .OrderBy(b => b.Title)
-                .ToListAsync();
+            return await _ctx.Items.ToListAsync();
             
         }
 
@@ -57,7 +52,7 @@ namespace Library.API.Services
         public async Task<User> GetItemOwnerAsync (int Id)
         {
             var item = await _ctx.Items.Where(b => b.Id == Id).FirstOrDefaultAsync();
-            return await userManager.FindByEmailAsync(item.OwnerEmail);
+            return await userManager.FindByEmailAsync(item.Owner.Email);
         }
 
         public async Task UpdateItemAsync(Item item)
@@ -66,7 +61,7 @@ namespace Library.API.Services
             if (bookInDb != null)
             {
                 bookInDb.PhotoUrl = item.PhotoUrl;
-                bookInDb.OwnerEmail = item.OwnerEmail;
+                bookInDb.Owner.Email = item.Owner.Email;
                 bookInDb.CurrentHolderEmail = item.CurrentHolderEmail;
                 bookInDb.Description = item.Description;
                 bookInDb.Title = item.Title;
