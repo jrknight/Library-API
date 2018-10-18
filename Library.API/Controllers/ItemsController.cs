@@ -82,7 +82,8 @@ namespace Library.API.Controllers
                 Description = item.Description,
                 CurrentHolderEmail = item.OwnerEmail,
                 PhotoUrl = item.PhotoUrl,
-                Title = item.Title
+                Title = item.Title,
+                OwnerEmail = item.OwnerEmail
             };
 
             var user = await userManager.FindByEmailAsync(finalItem.Owner.Email);
@@ -134,6 +135,7 @@ namespace Library.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var user = await userManager.FindByNameAsync(User.Claims.First().Value);
 
             ItemRequest itemRequest = new ItemRequest()
@@ -142,6 +144,8 @@ namespace Library.API.Controllers
                 UserId = user.Id,
                 RequestDate = request.RequestDate
             };
+
+
 
 
             itemRequestRepository.AddItemRequest(itemRequest);

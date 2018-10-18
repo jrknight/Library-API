@@ -9,5 +9,6 @@ namespace Library.API.Models
     {
         public int BookId { get; set; }
         public DateTime RequestDate { get; set; }
+        public string Message { get; set; }
     }
 }
